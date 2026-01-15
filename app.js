@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // HOME
   // ------------------------
   function renderHome() {
-  function renderHome() {
   app.innerHTML = `
     <h1>
       <img src="images/Logo.png" alt="Logo Calcha" style="width:32px; height:32px; vertical-align:middle; margin-right:8px;">
