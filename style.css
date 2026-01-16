@@ -392,3 +392,12 @@ input:focus {
 .btn-menu:hover {
   background: rgba(193, 68, 14, 0.06);
 }
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.btn-sumar {
+  margin-top: 0;
+}
