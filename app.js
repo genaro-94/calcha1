@@ -4,20 +4,27 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
-const WHATSAPP_ADMIN = "5493875181644";
-  function sumarMiComercio() {
-  const mensaje = encodeURIComponent(
-    "Hola 👋 Quiero sumar mi comercio a Calcha 🏔️\n\n" +
-    "Nombre del comercio:\n" +
-    "Rubro:\n" +
-    "Dirección:\n" +
-    "Teléfono:\n" +
-    "¿Delivery / Retiro?:"
-  );
+  const WHATSAPP_ADMIN = "5493875181644";
 
-  const url = `https://wa.me/${WHATSAPP_ADMIN}?text=${mensaje}`;
-  window.open(url, "_blank");
-}
+  // ------------------------
+  // NUEVO: Tipos de operación disponibles
+  // ------------------------
+  const tiposOperacion = ["pedido", "reserva", "info", "mixto"];
+
+  function sumarMiComercio() {
+    const mensaje = encodeURIComponent(
+      "Hola 👋 Quiero sumar mi comercio a Calcha 🏔️\n\n" +
+      "Nombre del comercio:\n" +
+      "Rubro:\n" +
+      "Dirección:\n" +
+      "Teléfono:\n" +
+      "¿Delivery / Retiro?:"
+    );
+
+    const url = `https://wa.me/${WHATSAPP_ADMIN}?text=${mensaje}`;
+    window.open(url, "_blank");
+  }
+
   let vistaActual = "home";
   let comercioActivo = null;
   let carrito = [];
@@ -44,7 +51,13 @@ const WHATSAPP_ADMIN = "5493875181644";
   fetch("comercios.json")
     .then(r => r.json())
     .then(data => {
-      comercios = data;
+      // Asegurar tipoOperacion válido en cada comercio
+      comercios = data.map(c => {
+        if (!c.tipoOperacion || !tiposOperacion.includes(c.tipoOperacion)) {
+          c.tipoOperacion = "pedido"; // default
+        }
+        return c;
+      });
       renderHome();
     });
 
@@ -53,6 +66,7 @@ const WHATSAPP_ADMIN = "5493875181644";
     if (vistaActual === "pedido") renderPedido();
     if (vistaActual === "confirmar") renderConfirmar();
     if (vistaActual === "info") renderInfo();
+    if (vistaActual === "reserva") renderReserva(); // nueva vista
   }
 
   // ------------------------
@@ -95,10 +109,10 @@ const WHATSAPP_ADMIN = "5493875181644";
 
       <div id="lista-comercios"></div>
     `;
-const btnSumar = document.getElementById("btn-sumar-comercio");
-if (btnSumar) {
-  btnSumar.onclick = sumarMiComercio;
-}
+
+    const btnSumar = document.getElementById("btn-sumar-comercio");
+    if (btnSumar) btnSumar.onclick = sumarMiComercio;
+
     document.getElementById("btn-rubros").onclick = () => {
       menuRubrosAbierto = !menuRubrosAbierto;
       renderHome();
@@ -135,21 +149,46 @@ if (btnSumar) {
         <p>${c.descripcion}</p>
         <button>Ver</button>
       `;
+
+      // ------------------------
+      // NUEVO: Manejo según tipoOperacion
+      // ------------------------
       card.querySelector("button").onclick = () => {
         comercioActivo = c;
         carrito = [];
         tipoEntrega = null;
         direccionEntrega = "";
-        vistaActual = "pedido";
-        history.pushState({ vista: "pedido", comercioId: c.id }, "", "#pedido");
-        renderPedido();
+
+        switch(c.tipoOperacion) {
+          case "pedido":
+            vistaActual = "pedido";
+            history.pushState({ vista: "pedido", comercioId: c.id }, "", "#pedido");
+            renderPedido();
+            break;
+          case "reserva":
+            vistaActual = "reserva";
+            history.pushState({ vista: "reserva", comercioId: c.id }, "", "#reserva");
+            renderReserva();
+            break;
+          case "info":
+            vistaActual = "info";
+            history.pushState({ vista: "info", comercioId: c.id }, "", "#info");
+            renderInfoComercio();
+            break;
+          case "mixto":
+            vistaActual = "pedido"; // mantiene pedido, podrías agregar botones extra
+            history.pushState({ vista: "pedido", comercioId: c.id }, "", "#pedido");
+            renderPedido();
+            break;
+        }
       };
+
       lista.appendChild(card);
     });
   }
 
   // ------------------------
-  // PEDIDO
+  // PEDIDO (igual que antes)
   // ------------------------
   function renderPedido() {
     if (!comercioActivo) return renderHome();
@@ -158,7 +197,6 @@ if (btnSumar) {
     comercioActivo.menu.forEach((item, i) => {
       const enCarrito = carrito.find(p => p.nombre === item.nombre);
       menuHTML += `
-      
         <div class="item-menu">
           <span>${item.nombre} - $${item.precio}</span>
           <div>
@@ -259,7 +297,7 @@ if (btnSumar) {
   }
 
   // ------------------------
-  // CONFIRMAR
+  // CONFIRMAR (igual que antes)
   // ------------------------
   function renderConfirmar() {
     const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
@@ -294,7 +332,7 @@ if (btnSumar) {
   }
 
   // ------------------------
-  // INFO
+  // INFO (igual que antes)
   // ------------------------
   function renderInfo() {
     app.innerHTML = `
@@ -304,4 +342,57 @@ if (btnSumar) {
     `;
     document.querySelector(".btn-volver").onclick = () => history.back();
   }
+
+  // ------------------------
+  // NUEVAS VISTAS
+  // ------------------------
+  function renderReserva() {
+    if (!comercioActivo) return renderHome();
+
+    const urlReserva = comercioActivo.urlReserva || `https://wa.me/54${comercioActivo.whatsapp}?text=${encodeURIComponent("Hola, quiero reservar")}`;
+
+    app.innerHTML = `
+      <button class="btn-volver">← Volver</button>
+      <img src="${comercioActivo.imagen}" class="comercio-img">
+      <h2>${comercioActivo.nombre}</h2>
+      <p>${comercioActivo.descripcion}</p>
+
+      ${
+        comercioActivo.galeria && comercioActivo.galeria.length > 0
+          ? `<div class="galeria-comercio">
+              ${comercioActivo.galeria.map(img => `<img src="${img}" class="galeria-img">`).join("")}
+            </div>`
+          : ""
+      }
+
+      <button onclick="window.open('${urlReserva}','_blank')">📅 Reservar</button>
+      <button onclick="window.open('https://wa.me/54${comercioActivo.whatsapp}','_blank')">💬 Contactar</button>
+    `;
+
+    document.querySelector(".btn-volver").onclick = () => history.back();
+  }
+
+  function renderInfoComercio() {
+    if (!comercioActivo) return renderHome();
+
+    app.innerHTML = `
+      <button class="btn-volver">← Volver</button>
+      <img src="${comercioActivo.imagen}" class="comercio-img">
+      <h2>${comercioActivo.nombre}</h2>
+      <p>${comercioActivo.descripcion}</p>
+
+      ${
+        comercioActivo.galeria && comercioActivo.galeria.length > 0
+          ? `<div class="galeria-comercio">
+              ${comercioActivo.galeria.map(img => `<img src="${img}" class="galeria-img">`).join("")}
+            </div>`
+          : ""
+      }
+
+      <button onclick="window.open('https://wa.me/54${comercioActivo.whatsapp}','_blank')">💬 Contactar</button>
+    `;
+
+    document.querySelector(".btn-volver").onclick = () => history.back();
+  }
+
 });
