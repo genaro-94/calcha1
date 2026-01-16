@@ -116,6 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       card.querySelector("button").onclick = () => {
         comercioActivo = comercio;
+        // Asegurarse de que menu y galeria existan
+        if (!comercioActivo.menu) comercioActivo.menu = [];
+        if (!comercioActivo.galeria) comercioActivo.galeria = [];
         resetEstados();
         vistaActual = "operacion";
         renderApp();
@@ -150,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // PEDIDO
   // ------------------------
   function renderPedido() {
-    // Menú del comercio
     let menuHTML = "";
     comercioActivo.menu.forEach((item, i) => {
       const enCarrito = carrito.find(p => p.nombre === item.nombre);
@@ -164,22 +166,18 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>`;
     });
 
-    // Galería de imágenes del comercio
+    // Galería segura
     let galeriaHTML = '';
-    if (comercioActivo.galeria && comercioActivo.galeria.length > 0) {
-      galeriaHTML = `
-        <div class="galeria-comercio">
-          ${comercioActivo.galeria.map(img => `
-            <img src="${img}" alt="${comercioActivo.nombre}" class="galeria-img">
-          `).join('')}
-        </div>
-      `;
+    if (comercioActivo.galeria && comercioActivo.galeria.length) {
+      galeriaHTML = '<div class="galeria-comercio">';
+      comercioActivo.galeria.forEach(img => {
+        galeriaHTML += `<img src="${img}" alt="${comercioActivo.nombre}" class="galeria-img">`;
+      });
+      galeriaHTML += '</div>';
     }
 
-    // Calcular total
     const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
 
-    // Render HTML
     app.innerHTML = `
       <button class="btn-volver">← Volver</button>
       <h2>${comercioActivo.nombre}</h2>
@@ -199,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // Event listeners
     document.querySelector(".btn-volver").onclick = volverHome;
 
     document.querySelectorAll(".item-menu button").forEach(b => {
@@ -220,9 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("retiro").onclick = () => { tipoEntrega = "retiro"; renderPedido(); };
     if (comercioActivo.permiteDelivery) document.getElementById("delivery").onclick = () => { tipoEntrega = "delivery"; renderPedido(); };
+
     document.getElementById("continuar").onclick = renderConfirmacionPedido;
 
-    // Lightbox galería
+    // Lightbox
     document.querySelectorAll(".galeria-img").forEach(img => {
       img.onclick = () => {
         const overlay = document.createElement("div");
