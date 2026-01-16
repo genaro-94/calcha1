@@ -64,4 +64,26 @@
     "estado": "activo",
     "destacado": false
   }
+
+  {
+    "id": 4,
+    "nombre": "hospedaje san jorge",
+    "rubro": "hotelería",
+    "descripcion": "un hermoso lugar para descansar en el centro de cafayate.",
+    "imagen": "images/sanjo.jpg",
+    "tipoOperacion": "reserva",
+    "permiteDelivery": false,
+    "menu": [
+      { "nombre": "hab. simple", "precio": 25000 },
+      { "nombre": "Hab. dobles", "precio": 40000 },
+      { "nombre": "hab. triple", "precio": 55000 },
+      { "nombre": "hab. cuadruple", "precio": 70000 }
+    ],
+    "galeria":["images/hab1.jpg",
+"images/hab2.jpg",
+    "images/hab3.jpg"],
+    "whatsapp": "3874000003",
+    "estado": "activo",
+    "destacado": false
+  }
 ]
