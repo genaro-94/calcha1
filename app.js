@@ -223,13 +223,15 @@ document.addEventListener("DOMContentLoaded", () => {
     comercioActivo.galeria && comercioActivo.galeria.length > 0
       ? `
         <div class="galeria-comercio">
-          ${comercioActivo.galeria
-            .map(
-              img =>
-                `<img src="${img}" class="galeria-img" alt="Galería ${comercioActivo.nombre}">`
-            )
-            .join("")}
-        </div>
+  ${comercioActivo.galeria
+    .map(
+      img =>
+        `<img src="${img}" 
+              class="galeria-img" 
+              onclick="abrirLightbox('${img}')">`
+    )
+    .join("")}
+</div>
       `
       : ""
   }
