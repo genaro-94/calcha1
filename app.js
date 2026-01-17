@@ -96,13 +96,18 @@ window.addEventListener("popstate", e => {
   // HISTORIAL
   // ------------------------
   window.addEventListener("popstate", (e) => {
-    vistaActual = e.state?.vista || "home";
-    rubroActivo = e.state?.rubro || "todos";
-    if (e.state?.comercioId) {
-      comercioActivo = comercios.find(c => c.id === e.state.comercioId);
-    }
-    renderApp();
-  });
+  const state = e.state || { vista: "home", rubro: "todos" };
+
+  vistaActual = state.vista;
+  rubroActivo = state.rubro;
+  comercioActivo = null;
+
+  if (state.comercioId) {
+    comercioActivo = comercios.find(c => c.id === state.comercioId);
+  }
+
+  renderApp();
+});
 
   // ------------------------
   // DATA
