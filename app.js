@@ -146,8 +146,7 @@ function renderHome() {
 
     ${
       menuRubrosAbierto
-
-          <div class="acciones">
+       ?  `<div class="acciones">
             <button id="btn-info" class="btn-menu">ℹ️ ¿Qué es Calcha?</button>
             <button id="btn-sumar-comercio" class="btn-menu">➕ Sumar mi comercio</button>
           </div>`
