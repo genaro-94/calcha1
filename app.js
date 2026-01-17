@@ -344,7 +344,7 @@ function irARubro(rubro) {
     ""
   );
 
-  vistaActual = "rubro";
+  vistaActual = "home";
   rubroActivo = rubro;
 
   renderApp();
