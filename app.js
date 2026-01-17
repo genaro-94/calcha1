@@ -129,7 +129,6 @@ window.addEventListener("popstate", e => {
   // ------------------------
   // HOME
   // ------------------------
-
 function renderHome() {
   vistaActual = "home";
   history.replaceState({ vista: "home" }, "", "#home");
@@ -141,23 +140,17 @@ function renderHome() {
     </h1>
     <p class="subtitulo">El mercado local en tu mano</p>
 
-    <!-- Botón rubros -->
+    <!-- Botón menú -->
     <button id="btn-rubros">☰</button>
 
     ${
       menuRubrosAbierto
-        ? `<div class="menu-rubros">
-            <button data-rubro="todos">Todos</button>
-            <button data-rubro="gastronomía">🍔 Gastronomía</button>
-            <button data-rubro="artesanía">🏺 Artesanía</button>
-            <button data-rubro="turismo">⛰️ Turismo</button>
-            <button data-rubro="servicios">🛠️ Servicios</button>
-          </div>
-
+        ? `
           <div class="acciones">
             <button id="btn-info" class="btn-menu">ℹ️ ¿Qué es Calcha?</button>
             <button id="btn-sumar-comercio" class="btn-menu">➕ Sumar mi comercio</button>
-          </div>`
+          </div>
+        `
         : ""
     }
 
@@ -165,6 +158,15 @@ function renderHome() {
     <div class="buscador">
       <input type="text" id="input-busqueda" placeholder="🔍 Buscar comercio..." autocomplete="off">
       <div id="resultados-busqueda" class="resultados-scroll"></div>
+    </div>
+
+    <!-- Rubros en grilla -->
+    <div class="rubros-grid">
+      <button data-rubro="todos">Todos</button>
+      <button data-rubro="gastronomía">🍔 Gastronomía</button>
+      <button data-rubro="artesanía">🏺 Artesanía</button>
+      <button data-rubro="turismo">⛰️ Turismo</button>
+      <button data-rubro="servicios">🛠️ Servicios</button>
     </div>
 
     <!-- Lista de comercios -->
@@ -194,7 +196,6 @@ function renderHome() {
   document.querySelectorAll("[data-rubro]").forEach(b => {
     b.onclick = () => {
       rubroActivo = b.dataset.rubro;
-      menuRubrosAbierto = false;
       renderHome();
     };
   });
@@ -223,7 +224,7 @@ function renderHome() {
       tipoEntrega = null;
       direccionEntrega = "";
 
-      switch(c.tipoOperacion) {
+      switch (c.tipoOperacion) {
         case "pedido":
           vistaActual = "pedido";
           history.pushState({ vista: "pedido", comercioId: c.id }, "", "#pedido");
@@ -251,7 +252,7 @@ function renderHome() {
   });
 
   // ------------------------
-  // Autocomplete / Búsqueda con scroll tipo TikTok/Instagram
+  // Autocomplete / búsqueda
   // ------------------------
   const inputBusqueda = document.getElementById("input-busqueda");
   const resultados = document.getElementById("resultados-busqueda");
@@ -260,7 +261,6 @@ function renderHome() {
     inputBusqueda.oninput = () => {
       const texto = inputBusqueda.value.trim().toLowerCase();
       resultados.innerHTML = "";
-
       if (texto === "") return;
 
       const filtrados = comercios.filter(c =>
@@ -281,14 +281,13 @@ function renderHome() {
           direccionEntrega = "";
           vistaActual = c.tipoOperacion === "reserva" ? "reserva" :
                        c.tipoOperacion === "info" ? "info" : "pedido";
-          history.pushState({ vista: vistaActual, comercioId: c.id }, "", `#${vistaActual}`);
+          history.pushState({ vista: vistaActual, comercioId: c.id }, "", \`#\${vistaActual}\`);
           renderApp();
         };
         resultados.appendChild(div);
       });
     };
 
-    // Cerrar resultados si haces click fuera
     document.addEventListener("click", e => {
       if (!e.target.closest(".buscador")) {
         resultados.innerHTML = "";
@@ -296,6 +295,8 @@ function renderHome() {
     });
   }
 }
+
+    
 
 
   // ------------------------
