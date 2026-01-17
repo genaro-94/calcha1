@@ -97,6 +97,7 @@ window.addEventListener("popstate", e => {
   // ------------------------
   window.addEventListener("popstate", (e) => {
     vistaActual = e.state?.vista || "home";
+    rubroActivo = e.state?.rubro || "todos";
     if (e.state?.comercioId) {
       comercioActivo = comercios.find(c => c.id === e.state.comercioId);
     }
