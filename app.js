@@ -216,12 +216,19 @@ function renderHome() {
   }
 
   document.querySelectorAll("[data-rubro]").forEach(b => {
-    b.onclick = () => {
-      rubroActivo = b.dataset.rubro;
-      menuRubrosAbierto = false;
-      renderHome();
-    };
-  });
+  b.onclick = () => {
+    rubroActivo = b.dataset.rubro;
+    menuRubrosAbierto = false;
+
+    history.pushState(
+      { vista: "home", rubro: rubroActivo },
+      "",
+      "#rubro-" + rubroActivo
+    );
+
+    renderHome();
+  };
+});
 
   // ------------------------
   // Renderizar lista de comercios
