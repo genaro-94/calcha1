@@ -227,9 +227,9 @@ function renderHome() {
   // Renderizar lista de comercios
   // ------------------------
   const lista = document.getElementById("lista-comercios");
-  const filtrados = rubroActivo === "todos"
-    ? comercios
-    : comercios.filter(c => c.rubro === rubroActivo);
+const filtrados = rubroActivo === "todos"
+  ? comercios
+  : comercios.filter(c => c.rubro === rubroActivo.trim());
 
   filtrados.forEach(c => {
     const card = document.createElement("div");
