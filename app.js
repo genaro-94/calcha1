@@ -146,13 +146,6 @@ function renderHome() {
 
     ${
       menuRubrosAbierto
-        ? `<div class="menu-rubros">
-            <button data-rubro="todos">Todos</button>
-            <button data-rubro="gastronomía">🍔 Gastronomía</button>
-            <button data-rubro="artesanía">🏺 Artesanía</button>
-            <button data-rubro="turismo">⛰️ Turismo</button>
-            <button data-rubro="servicios">🛠️ Servicios</button>
-          </div>
 
           <div class="acciones">
             <button id="btn-info" class="btn-menu">ℹ️ ¿Qué es Calcha?</button>
